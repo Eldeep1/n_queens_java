@@ -43,7 +43,7 @@ public class NQueensss extends JFrame {
     private JPanel topPanel;  // Declare topPanel as an instance variable
 
     public NQueensss() {
-        this.n = 4; // Assign the value of n
+        this.n = 0; // Assign the value of n
 
         // Calculate chessboardSize after n is assigned
         this.chessboardSize = n * cellSize;
@@ -84,7 +84,7 @@ public class NQueensss extends JFrame {
                 updateChessboardInBackground();
             }
         });
-        
+
         topPanel.add(label);
         topPanel.add(boardSizeField);
         topPanel.add(startButton);
@@ -229,7 +229,7 @@ public class NQueensss extends JFrame {
 
         return elementPanel;
     }
-    
+
     private void updateChessboard() {
         chessboardSize = n * cellSize;
 
@@ -259,8 +259,6 @@ public class NQueensss extends JFrame {
         setVisible(true);
     }
 
-    
-    
     private static boolean isSafe(int[][] board, int row, int col) {
         for (int i = 0; i < row; i++) {
             if (board[i][col] == 1) {
@@ -283,8 +281,7 @@ public class NQueensss extends JFrame {
         return true;
     }
 
- 
-    private  boolean solver(int[][] board, int row, int col, int whichOne) {
+    private boolean solver(int[][] board, int row, int col, int whichOne) {
 
         if (row >= n) {
             return true;
@@ -294,14 +291,14 @@ public class NQueensss extends JFrame {
             if (board[row][col] == 0) {
                 board[row][col] = 1;
 //                        System.out.println("Queen placed at row " + row + ", column " + col);
-                       placeXOnChessboard(whichOne, col, row);
+                placeXOnChessboard(whichOne, col, row);
 
                 if (solver(board, row + 1, col, whichOne)) {
                     return true;
                 }
                 board[row][col] = 0;
 //                        System.out.println("Queen removed from row " + row + ", column " + col);
-               removeElementFromChessboard(whichOne, col, row);
+                removeElementFromChessboard(whichOne, col, row);
 
             }
         }
@@ -311,16 +308,10 @@ public class NQueensss extends JFrame {
                 if (isSafe(board, row, i)) {
                     board[row][i] = 1;
 //                    System.out.println("Queen placed at row " + row + ", column " + i);
-if(i<n){
-                    try {
+                    if (i < n) {
                             placeXOnChessboard(whichOne, i, row);
 
-    } catch (Exception e) {
-                     
-                        
-    }
-    
-}
+                    }
 
                     if (solver(board, row + 1, i, whichOne)) {
                         return true;
@@ -336,33 +327,30 @@ if(i<n){
         return false;
     }
 
-    
-     private void updateChessboardInBackground() {
+    private void updateChessboardInBackground() {
         SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() throws Exception {
                 updateChessboard();
-                
-                
-    Thread[] threads = new Thread[n];
 
-    for (int i = 0; i < n; i++) {
-        final int boardSize = n;
-        final int columnIndex = i;
+                Thread[] threads = new Thread[n];
 
-        threads[i] = new Thread(() -> solveNQ(boardSize, columnIndex));
-        threads[i].start();
-    }
+                for (int i = 0; i < n; i++) {
+                    final int boardSize = n;
+                    final int columnIndex = i;
 
-    try {
-        for (Thread thread : threads) {
-            thread.join(); // Wait for all threads to finish
+                    threads[i] = new Thread(() -> solveNQ(boardSize, columnIndex));
+                    threads[i].start();
+                }
 
-        }
-    } catch (InterruptedException e) {
-        e.printStackTrace();
-    }
+                try {
+                    for (Thread thread : threads) {
+                        thread.join(); // Wait for all threads to finish
 
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
                 return null;
             }
@@ -375,25 +363,22 @@ if(i<n){
 
         worker.execute();
     }
-     
-    public  void solveNQ(int n, int whichOne) {
-        
+
+    public void solveNQ(int n, int whichOne) {
+
         int[][] board = new int[n][n];
 
-    
-            for (int i = 0; i < n; i++) {
-                int[] row = new int[n];
-                board[i] = row;
-            }
-            solver(board, 0, whichOne, whichOne);
+        for (int i = 0; i < n; i++) {
+            int[] row = new int[n];
+            board[i] = row;
+        }
+        solver(board, 0, whichOne, whichOne);
 //                System.out.println("Solution found:");
-                // Assuming number_of_trials_back_track is a variable defined elsewhere
-                // number_of_trials_back_track = number_of_trials[0];
-                return;
+        // Assuming number_of_trials_back_track is a variable defined elsewhere
+        // number_of_trials_back_track = number_of_trials[0];
+        return;
     }
-    
-    
-   
+
     /**
      * @param args the command line arguments
      */
